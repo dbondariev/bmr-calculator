@@ -12,8 +12,8 @@ import {
     Typography,
     Box,
     Paper,
-    Select,
     MenuItem,
+    Select,
     InputLabel,
 } from "@mui/material";
 
@@ -22,18 +22,16 @@ function App() {
     const [gender, setGender] = useState("");
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
-    const [activityLevel, setActivityLevel] = useState("sedentary");
+    const [activity, setActivity] = useState("");
     const [bmr, setBmr] = useState<number | null>(null);
-    const [tdee, setTdee] = useState<number | null>(null);
 
     const handleClear = () => {
         setAge("");
         setGender("");
         setHeight("");
         setWeight("");
-        setActivityLevel("sedentary");
+        setActivity("");
         setBmr(null);
-        setTdee(null);
     };
 
     const handleCalculate = async () => {
@@ -43,13 +41,28 @@ function App() {
                 gender,
                 height: Number(height),
                 weight: Number(weight),
-                activity_level: activityLevel,
+                activity_level: activity,
             });
             setBmr(response.data.bmr);
-            setTdee(response.data.tdee);
         } catch (err) {
             alert("Error calculating BMR.");
         }
+    };
+
+    const isValid = () => {
+        const a = Number(age);
+        const h = Number(height);
+        const w = Number(weight);
+        return (
+            a >= 1 &&
+            a <= 100 &&
+            h > 0 &&
+            h <= 272 &&
+            w > 0 &&
+            w <= 635 &&
+            (gender === "male" || gender === "female") &&
+            activity !== ""
+        );
     };
 
     return (
@@ -73,9 +86,22 @@ function App() {
                         margin="normal"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
+                        error={!age || Number(age) <= 0 || Number(age) > 100}
+                        helperText={
+                            !age
+                                ? "Age is required"
+                                : Number(age) <= 0 || Number(age) > 100
+                                    ? "Enter age between 1 and 100"
+                                    : ""
+                        }
                     />
 
-                    <FormControl component="fieldset" margin="normal" required>
+                    <FormControl
+                        component="fieldset"
+                        margin="normal"
+                        required
+                        error={!gender}
+                    >
                         <FormLabel component="legend">Gender</FormLabel>
                         <RadioGroup
                             row
@@ -95,6 +121,14 @@ function App() {
                         margin="normal"
                         value={height}
                         onChange={(e) => setHeight(e.target.value)}
+                        error={!height || Number(height) <= 0 || Number(height) > 272}
+                        helperText={
+                            !height
+                                ? "Height is required"
+                                : Number(height) <= 0 || Number(height) > 272
+                                    ? "Enter height between 1 and 272 cm"
+                                    : ""
+                        }
                     />
 
                     <TextField
@@ -105,20 +139,34 @@ function App() {
                         margin="normal"
                         value={weight}
                         onChange={(e) => setWeight(e.target.value)}
+                        error={!weight || Number(weight) <= 0 || Number(weight) > 635}
+                        helperText={
+                            !weight
+                                ? "Weight is required"
+                                : Number(weight) <= 0 || Number(weight) > 635
+                                    ? "Enter weight between 1 and 635 kg"
+                                    : ""
+                        }
                     />
 
-                    <FormControl fullWidth required margin="normal">
+                    <FormControl
+                        fullWidth
+                        required
+                        margin="normal"
+                        error={!activity}
+                    >
                         <InputLabel>Activity Level</InputLabel>
                         <Select
-                            value={activityLevel}
+                            value={activity}
+                            onChange={(e) => setActivity(e.target.value)}
                             label="Activity Level"
-                            onChange={(e) => setActivityLevel(e.target.value)}
                         >
+                            <MenuItem value="">Select...</MenuItem>
                             <MenuItem value="sedentary">Sedentary (little or no exercise)</MenuItem>
-                            <MenuItem value="light">Light (1-3 days/week)</MenuItem>
-                            <MenuItem value="moderate">Moderate (3-5 days/week)</MenuItem>
-                            <MenuItem value="active">Active (6-7 days/week)</MenuItem>
-                            <MenuItem value="very active">Very Active (hard training/physical job)</MenuItem>
+                            <MenuItem value="light">Lightly active (light exercise/sports 1–3 days/week)</MenuItem>
+                            <MenuItem value="moderate">Moderately active (3–5 days/week)</MenuItem>
+                            <MenuItem value="active">Very active (6–7 days/week)</MenuItem>
+                            <MenuItem value="extra">Super active (hard daily training)</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -126,7 +174,7 @@ function App() {
                         <Button
                             type="submit"
                             variant="contained"
-                            disabled={!age || !gender || !height || !weight}
+                            disabled={!isValid()}
                         >
                             Calculate
                         </Button>
@@ -134,21 +182,22 @@ function App() {
                             type="button"
                             variant="outlined"
                             onClick={handleClear}
-                            disabled={!age && !gender && !height && !weight}
+                            disabled={!age && !gender && !height && !weight && !activity}
                         >
                             Clear
                         </Button>
                     </Box>
 
                     {bmr !== null && (
-                        <Box mt={4} textAlign="center">
-                            <Typography variant="h6" color="primary" fontWeight="bold">
-                                BMR: {bmr} kcal/day
-                            </Typography>
-                            <Typography variant="h6" color="secondary" fontWeight="bold">
-                                TDEE: {tdee} kcal/day
-                            </Typography>
-                        </Box>
+                        <Typography
+                            variant="h6"
+                            align="center"
+                            mt={4}
+                            color="primary"
+                            fontWeight="bold"
+                        >
+                            Your Basal Metabolic Rate: {bmr}
+                        </Typography>
                     )}
                 </form>
             </Paper>
