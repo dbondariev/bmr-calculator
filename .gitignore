@@ -1,0 +1,11 @@
+# Node modules and build files
+/frontend/node_modules
+/frontend/dist
+
+# Python virtual env
+/backend/venv
+
+# IDE folders
+.vscode/
+.idea/
+.DS_Store
