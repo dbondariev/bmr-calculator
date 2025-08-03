@@ -1,6 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
-import "./App.css";
+import {
+    Container,
+    TextField,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
+    FormLabel,
+    Button,
+    Typography,
+    Box,
+    Paper,
+} from "@mui/material";
 
 function App() {
     const [age, setAge] = useState("");
@@ -31,66 +43,93 @@ function App() {
         }
     };
 
-    const isFormFilled = age || gender || height || weight;
-
     return (
-        <div className="container">
-            <form
-                className="form"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    handleCalculate();
-                }}
-            >
-                <h1 style={{ textAlign: "center", marginBottom: "1rem" }}>Basal Metabolic Rate Calculator</h1>
+        <Container maxWidth="sm" sx={{ py: 6 }}>
+            <Paper elevation={3} sx={{ p: 4 }}>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleCalculate();
+                    }}
+                >
+                    <Typography variant="h4" align="center" gutterBottom>
+                        Basal Metabolic Rate Calculator
+                    </Typography>
 
-                <input
-                    placeholder="Age"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    type="number"
-                    required
-                />
-                <input
-                    placeholder="Gender (male/female)"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value.toLowerCase())}
-                    required
-                    pattern="male|female"
-                    title="Please enter 'male' or 'female'"
-                />
-                <input
-                    placeholder="Height (cm)"
-                    value={height}
-                    onChange={(e) => setHeight(e.target.value)}
-                    type="number"
-                    required
-                />
-                <input
-                    placeholder="Weight (kg)"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    type="number"
-                    required
-                />
+                    <TextField
+                        label="Age"
+                        type="number"
+                        fullWidth
+                        required
+                        margin="normal"
+                        value={age}
+                        onChange={(e) => setAge(e.target.value)}
+                    />
 
-                <div style={{ marginTop: "1rem" }}>
-                    <button type="submit" disabled={!isFormFilled}>
-                        Calculate
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleClear}
-                        disabled={!isFormFilled}
-                        style={{ marginLeft: "1rem" }}
-                    >
-                        Clear
-                    </button>
-                </div>
+                    <FormControl component="fieldset" margin="normal" required>
+                        <FormLabel component="legend">Gender</FormLabel>
+                        <RadioGroup
+                            row
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                        >
+                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                            <FormControlLabel value="female" control={<Radio />} label="Female" />
+                        </RadioGroup>
+                    </FormControl>
 
-                {bmr !== null && <div className="result">Your Basal Metabolic Rate: {bmr}</div>}
-            </form>
-        </div>
+                    <TextField
+                        label="Height (cm)"
+                        type="number"
+                        fullWidth
+                        required
+                        margin="normal"
+                        value={height}
+                        onChange={(e) => setHeight(e.target.value)}
+                    />
+
+                    <TextField
+                        label="Weight (kg)"
+                        type="number"
+                        fullWidth
+                        required
+                        margin="normal"
+                        value={weight}
+                        onChange={(e) => setWeight(e.target.value)}
+                    />
+
+                    <Box display="flex" justifyContent="space-between" mt={3}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={!age || !gender || !height || !weight}
+                        >
+                            Calculate
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            onClick={handleClear}
+                            disabled={!age && !gender && !height && !weight}
+                        >
+                            Clear
+                        </Button>
+                    </Box>
+
+                    {bmr !== null && (
+                        <Typography
+                            variant="h6"
+                            align="center"
+                            mt={4}
+                            color="primary"
+                            fontWeight="bold"
+                        >
+                            Your Basal Metabolic Rate: {bmr}
+                        </Typography>
+                    )}
+                </form>
+            </Paper>
+        </Container>
     );
 }
 
