@@ -24,6 +24,7 @@ function App() {
     const [weight, setWeight] = useState("");
     const [activity, setActivity] = useState("");
     const [bmr, setBmr] = useState<number | null>(null);
+    const [tdee, setTdee] = useState<number | null>(null);
 
     const handleClear = () => {
         setAge("");
@@ -32,6 +33,7 @@ function App() {
         setWeight("");
         setActivity("");
         setBmr(null);
+        setTdee(null);
     };
 
     const handleCalculate = async () => {
@@ -44,6 +46,8 @@ function App() {
                 activity_level: activity,
             });
             setBmr(response.data.bmr);
+            setTdee(response.data.tdee);
+
         } catch (err) {
             alert("Error calculating BMR.");
         }
@@ -189,16 +193,28 @@ function App() {
                     </Box>
 
                     {bmr !== null && (
-                        <Typography
-                            variant="h6"
-                            align="center"
-                            mt={4}
-                            color="primary"
-                            fontWeight="bold"
-                        >
-                            Your Basal Metabolic Rate: {bmr}
-                        </Typography>
+                        <Box mt={4}>
+                            <Typography
+                                variant="h6"
+                                align="center"
+                                color="primary"
+                                fontWeight="bold"
+                            >
+                                Your Basal Metabolic Rate: {bmr}
+                            </Typography>
+                            {tdee !== null && (
+                                <Typography
+                                    variant="h6"
+                                    align="center"
+                                    color="secondary"
+                                    fontWeight="bold"
+                                >
+                                    Your Total Daily Energy Expenditure (TDEE): {tdee}
+                                </Typography>
+                            )}
+                        </Box>
                     )}
+
                 </form>
             </Paper>
         </Container>
