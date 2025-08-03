@@ -12,6 +12,9 @@ import {
     Typography,
     Box,
     Paper,
+    Select,
+    MenuItem,
+    InputLabel,
 } from "@mui/material";
 
 function App() {
@@ -19,14 +22,18 @@ function App() {
     const [gender, setGender] = useState("");
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
+    const [activityLevel, setActivityLevel] = useState("sedentary");
     const [bmr, setBmr] = useState<number | null>(null);
+    const [tdee, setTdee] = useState<number | null>(null);
 
     const handleClear = () => {
         setAge("");
         setGender("");
         setHeight("");
         setWeight("");
+        setActivityLevel("sedentary");
         setBmr(null);
+        setTdee(null);
     };
 
     const handleCalculate = async () => {
@@ -36,8 +43,10 @@ function App() {
                 gender,
                 height: Number(height),
                 weight: Number(weight),
+                activity_level: activityLevel,
             });
             setBmr(response.data.bmr);
+            setTdee(response.data.tdee);
         } catch (err) {
             alert("Error calculating BMR.");
         }
@@ -98,6 +107,21 @@ function App() {
                         onChange={(e) => setWeight(e.target.value)}
                     />
 
+                    <FormControl fullWidth required margin="normal">
+                        <InputLabel>Activity Level</InputLabel>
+                        <Select
+                            value={activityLevel}
+                            label="Activity Level"
+                            onChange={(e) => setActivityLevel(e.target.value)}
+                        >
+                            <MenuItem value="sedentary">Sedentary (little or no exercise)</MenuItem>
+                            <MenuItem value="light">Light (1-3 days/week)</MenuItem>
+                            <MenuItem value="moderate">Moderate (3-5 days/week)</MenuItem>
+                            <MenuItem value="active">Active (6-7 days/week)</MenuItem>
+                            <MenuItem value="very active">Very Active (hard training/physical job)</MenuItem>
+                        </Select>
+                    </FormControl>
+
                     <Box display="flex" justifyContent="space-between" mt={3}>
                         <Button
                             type="submit"
@@ -117,15 +141,14 @@ function App() {
                     </Box>
 
                     {bmr !== null && (
-                        <Typography
-                            variant="h6"
-                            align="center"
-                            mt={4}
-                            color="primary"
-                            fontWeight="bold"
-                        >
-                            Your Basal Metabolic Rate: {bmr}
-                        </Typography>
+                        <Box mt={4} textAlign="center">
+                            <Typography variant="h6" color="primary" fontWeight="bold">
+                                BMR: {bmr} kcal/day
+                            </Typography>
+                            <Typography variant="h6" color="secondary" fontWeight="bold">
+                                TDEE: {tdee} kcal/day
+                            </Typography>
+                        </Box>
                     )}
                 </form>
             </Paper>
