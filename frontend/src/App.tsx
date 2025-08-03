@@ -19,7 +19,7 @@ function App() {
 
     const handleCalculate = async () => {
         try {
-            const response = await axios.post("http://localhost:8000/calculate", {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/calculate`, {
                 age: Number(age),
                 gender,
                 height: Number(height),
